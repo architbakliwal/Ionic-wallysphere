@@ -132,7 +132,7 @@ angular.module('starter.controllers', [])
         });
 
         window.plugin.notification.local.onadd = function (id, state, json) {
-            console.log(id);
+            // console.log(id);
         };
 
         window.plugin.notification.local.ontrigger = function (id, state, json) {

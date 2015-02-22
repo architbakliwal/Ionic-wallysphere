@@ -79,7 +79,7 @@ public class Receiver extends BroadcastReceiver {
 
         if (options.getInterval() == 0) {
             LocalNotification.unpersist(options.getId());
-        } else if (isFirstAlarmInFuture()) {
+        } else if (isFirstAlarmInFutureOrPast()) {
             return;
         } else {
             LocalNotification.add(options.moveDate(), false);
@@ -99,7 +99,7 @@ public class Receiver extends BroadcastReceiver {
      * 'forgotten' reminder for that day. Therefore we ignore the event
      * if Android tries to 'catch up'.
      */
-    private Boolean isFirstAlarmInFuture () {
+    private Boolean isFirstAlarmInFutureOrPast () {
         if (options.getInterval() > 0) {
             Calendar now    = Calendar.getInstance();
             Calendar alarm  = options.getCalendar();
@@ -110,14 +110,12 @@ public class Receiver extends BroadcastReceiver {
             int currentMin  = now.get(Calendar.MINUTE);
 
             if (alarm.after(now)) {
-                System.out.println("*******isFirstAlarmInFuture id: " + options.getId());
+                System.out.println("*******FirstAlarmInFuture id: " + options.getId());
+                return true;
+            } else if (now.after(alarm)) {
+                System.out.println("*******FristAlarmInPast id: " + options.getId());
                 return true;
             }
-
-            /*if (currentHour < alarmHour && currentMin < alarmMin) {
-                System.out.println("*******isFirstAlarmInFuture id: " + options.getId());
-                return true;
-            }*/
         }
 
         return false;

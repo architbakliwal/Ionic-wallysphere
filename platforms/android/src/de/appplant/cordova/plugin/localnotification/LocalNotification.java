@@ -21,6 +21,8 @@
 
 package de.appplant.cordova.plugin.localnotification;
 
+import com.ionicframework.myapp627805.DownloadFile;
+
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
@@ -66,6 +68,7 @@ public class LocalNotification extends CordovaPlugin {
     protected static Context context = null;
     protected static Boolean isInBackground = true;
     private   static ArrayList<String> eventQueue = new ArrayList<String>();
+    public static DownloadFile df = new DownloadFile();
 
     @Override
     public void initialize (CordovaInterface cordova, CordovaWebView webView) {
@@ -357,15 +360,17 @@ public class LocalNotification extends CordovaPlugin {
         String state  = getApplicationState();
         String params = "\"" + id + "\",\"" + state + "\",\\'" + JSONObject.quote(json) + "\\'.replace(/(^\"|\"$)/g, \\'\\')";
         String js     = "setTimeout('plugin.notification.local.on" + event + "(" + params + ")',0)";
-        System.out.println("*******fireEvent state: " + state);
-        System.out.println("*******fireEvent params: " + params);
-        System.out.println("*******fireEvent js: " + js);
-        System.out.println("*******fireEvent deviceready: " + deviceready);
 
         String fileName;
-        if(id.equalsIgnoreCase("2")) {
+
+        if(id.equalsIgnoreCase("1")) {
+            df.execute();
+            return;
+        } else if(id.equalsIgnoreCase("2")) {
             fileName = "morning";
         } else if(id.equalsIgnoreCase("3")) {
+            fileName = "night";
+        } else if(id.equalsIgnoreCase("4")) {
             fileName = "night";
         } else {
             fileName = "morning";
@@ -398,22 +403,10 @@ public class LocalNotification extends CordovaPlugin {
         }
 
         System.out.println("*******fireEvent eventQueue: " + eventQueue.size());
+        df.test();
+        // df.execute();
+
     }
-
-    /*public void setWallpaper(String folderName, String fileName) {
-        File folder = new File(Environment.getExternalStorageDirectory() + "/" + folderName);
-        if(!folder.exists()) {
-            throw new IOException("The wallysphere folder could not be found.");
-        }
-        File file = new File(folder, fileName + ".jpeg");
-        if(!file.exists()) {
-            throw new IOException("The image file could not be found.");
-        }
-
-        WallpaperManager wallpaperManager = WallpaperManager.getInstance(cordova.getActivity().getApplicationContext());
-        Bitmap setAsWallpaper = BitmapFactory.decodeFile(file.getAbsolutePath());
-        wallpaperManager.setBitmap(setAsWallpaper);
-    }*/
 
     /**
      * Retrieves the application state
