@@ -13,10 +13,3 @@ gen
 out
 # Gradle builds
 /build
-# System files
-assets/
-cordova/
-cordovaLib/
-libs/
-platform_www/
-res/
