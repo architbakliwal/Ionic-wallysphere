@@ -2,24 +2,22 @@ package com.ionicframework.myapp627805;
 
 import com.ionicframework.myapp627805.DownloadAndResize;
 
+import java.util.Random;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import android.os.AsyncTask;
 import java.io.BufferedReader;
 import java.net.URL;
 import org.json.JSONObject;
-import org.json.JSONArray;
 import java.io.InputStream;
-import java.util.Random;
+import org.json.JSONArray;
 
-public class DownloadFile extends AsyncTask<String, Void, String>
-{
-    public DownloadAndResize dwr = new DownloadAndResize();
+	
+public class DownloadWallpaper {
 
-    @Override
-    protected String doInBackground(String... params)
-    {
-        StringBuilder urlString = new StringBuilder();
+	public DownloadAndResize dwr = new DownloadAndResize();
+
+	public String downloadFlickr() {
+		StringBuilder urlString = new StringBuilder();
         urlString.append("https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=2962d4c497bd4b64a58dbdfb31e0da27&tags=night%2C+sky%2C+moon%2C+stars&text=night+sky+stars+moon&sort=interestingness-desc&content_type=1&media=photos&extras=url_o&per_page=10&page=1&format=json&nojsoncallback=1");
 
         HttpURLConnection urlConnection = null;
@@ -46,12 +44,12 @@ public class DownloadFile extends AsyncTask<String, Void, String>
             urlConnection.disconnect();
             // System.out.println(response);
             Random rand = new Random();
-            int randomNum = rand.nextInt((9 - 0) + 1) + 0;
+		    int randomNum = rand.nextInt((9 - 0) + 1) + 0;
 
             JSONObject obj = new JSONObject(response);
-            JSONObject photos = obj.getJSONObject("photos");
-            JSONArray photo = photos.getJSONArray("photo");
-            JSONObject attrs = photo.getJSONObject(randomNum);
+    		JSONObject photos = obj.getJSONObject("photos");
+    		JSONArray photo = photos.getJSONArray("photo");
+    		JSONObject attrs = photo.getJSONObject(randomNum);
 
             String flickrfarmid = attrs.getString("farm");
             String flickrserverid = attrs.getString("server");
@@ -66,15 +64,9 @@ public class DownloadFile extends AsyncTask<String, Void, String>
         }
         catch (Exception e)
         {
-            e.printStackTrace();
+        	e.printStackTrace();
         }
 
         return (response);
-    }
-
-    @Override
-    protected void onPostExecute(String result)
-    {
-        super.onPostExecute(result);
-    }
+	}
 }
