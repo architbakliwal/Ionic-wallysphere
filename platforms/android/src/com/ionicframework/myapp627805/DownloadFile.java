@@ -14,7 +14,12 @@ import java.util.Random;
 
 public class DownloadFile extends AsyncTask<String, Void, String>
 {
-    public DownloadAndResize dwr = new DownloadAndResize();
+    public DownloadAndResize dwr = new DownloadAndResize(context);
+    private Context context;
+
+    public DownloadFile(Context context) {
+        this.context=context;
+    }
 
     @Override
     protected String doInBackground(String... params)

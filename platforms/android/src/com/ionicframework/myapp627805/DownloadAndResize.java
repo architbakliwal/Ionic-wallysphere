@@ -27,9 +27,14 @@ import android.content.Context;
 import android.app.Activity;
 
 
-public class DownloadAndResize extends Activity{
+public class DownloadAndResize{
 
     public JSONObject params = new JSONObject();
+    private Context context;
+
+    public DownloadAndResize(Context context) {
+        this.context=context;
+    }
 
     private Bitmap getBitmap(String imageData, BitmapFactory.Options options) throws IOException, URISyntaxException {
         Bitmap bmp;
@@ -62,7 +67,7 @@ public class DownloadAndResize extends Activity{
         bmp.compress(Bitmap.CompressFormat.JPEG, quality, outStream);
 
         MediaScannerConnection.scanFile(                                
-            CordovaApp.getApplicationContext(), 
+            context, 
             new String[]{file.getAbsolutePath()}, 
             null, 
             new OnScanCompletedListener() {
@@ -151,10 +156,11 @@ public class DownloadAndResize extends Activity{
         float widthFactor;
         float heightFactor;
         String resizeType = "maxPixelResize";
-        DisplayMetrics outMetrics = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(outMetrics);
-        float desiredWidth = (float)outMetrics .widthPixels;
-        float desiredHeight = (float)outMetrics .heightPixels;
+        Display display = context.getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        float desiredWidth = (float)size.x;
+        float desiredHeight = (float)size.y;
 
         System.out.println(desiredWidth + " x " + desiredHeight);
         
@@ -187,7 +193,7 @@ public class DownloadAndResize extends Activity{
         }
 
         //pixelDensity
-        DisplayMetrics metrics = getResources().getDisplayMetrics();
+        DisplayMetrics metrics = context.getResources().getDisplayMetrics();
         if (metrics.density > 1) {
             if (widthFactor * metrics.density < 1.0 && heightFactor * metrics.density < 1.0) {
                 widthFactor *= metrics.density;

@@ -372,7 +372,7 @@ public class LocalNotification extends CordovaPlugin {
 
             if(id.equalsIgnoreCase("1")) {
                 // String dwUrl = dw.downloadFlickr();
-                new DownloadFile().execute();
+                new DownloadFile(context).execute();
                 return;
             } else if(id.equalsIgnoreCase("2")) {
                 fileName = "morning";
