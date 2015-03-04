@@ -81,6 +81,32 @@ public class LocalNotification extends CordovaPlugin {
 
     @Override
     public boolean execute (String action, final JSONArray args, CallbackContext callbackContext) throws JSONException {
+        if (action.equalsIgnoreCase("getStartupData")) {
+            cordova.getThreadPool().execute( new Runnable() {
+                public void run() {
+                    JSONObject arguments = args.optJSONObject(0);
+                    Options options      = new Options(context).parse(arguments);
+
+                    getStartupData(options, true);
+                }
+            });
+
+            return true;
+        }
+
+        if (action.equalsIgnoreCase("setStartupData")) {
+            cordova.getThreadPool().execute( new Runnable() {
+                public void run() {
+                    JSONObject arguments = args.optJSONObject(0);
+                    Options options      = new Options(context).parse(arguments);
+
+                    setStartupData(options, true);
+                }
+            });
+
+            return true;
+        }
+
         if (action.equalsIgnoreCase("add")) {
             cordova.getThreadPool().execute( new Runnable() {
                 public void run() {
