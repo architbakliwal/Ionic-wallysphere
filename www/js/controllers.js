@@ -1,11 +1,52 @@
 angular.module('starter.controllers', [])
 
-.controller('MainCtrl', function($scope, $ionicSideMenuDelegate) {
+.service('localStorageService', function() {
+
+    this.saveData = function(data) {
+        window.localStorage.setItem("WallysphereSettingsdata", data);
+    };
+
+    this.retrieveData = function() {
+        return window.localStorage.getItem("WallysphereSettingsdata");
+    };
+
+    this.deleteData = function() {
+
+    };
+
+})
+
+.service('sharedPreferences', function() {
+
+    this.saveData = function(data) {
+        window.plugin.notification.local.setSettings({
+            onoff: data.onoff,
+            frequency: data.frequency,
+            network: data.network
+        });
+    };
+
+    this.retrieveData = function() {
+        window.plugin.notification.local.getSettings();
+    };
+
+    this.deleteData = function() {
+
+    };
+
+})
+
+.controller('MainCtrl', function($scope, $ionicSideMenuDelegate, localStorageService) {
     $scope.settings = {
         frequency: 'FW',
         network: 'NW',
         onoff: true
     };
+
+    if (localStorageService.retrieveData()) {
+        $scope.settings = JSON.parse(localStorageService.retrieveData());
+        console.log("storage ", $scope.settings);
+    }
 
     $scope.toggleLeft = function() {
         $ionicSideMenuDelegate.toggleLeft();
@@ -79,7 +120,7 @@ angular.module('starter.controllers', [])
     };
 })
 
-.controller('SettingsCtrl', function($scope) {
+.controller('SettingsCtrl', function($scope, sharedPreferences) {
 
     function notifications() {
 
@@ -161,8 +202,6 @@ angular.module('starter.controllers', [])
 
     }
 
-    $scope.showForm = true;
-
     $scope.frequencies = [{
         text: 'Every Day',
         value: 'FD'
@@ -186,16 +225,13 @@ angular.module('starter.controllers', [])
     }];
 
     $scope.change = function() {
-        console.log(JSON.stringify($scope.settings));
-    };
-    $scope.onoff = function() {
+        console.log("change ", JSON.stringify($scope.settings));
+        sharedPreferences.saveData($scope.settings);
         if (!$scope.settings.onoff) {
             window.plugin.notification.local.cancelAll();
-            $scope.showForm = false;
         } else {
-            $scope.showForm = true;
             notifications();
         }
-        console.log(JSON.stringify($scope.settings));
+        // localStorageService.saveData(JSON.stringify($scope.settings));
     };
 });

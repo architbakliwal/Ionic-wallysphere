@@ -4,7 +4,10 @@ public class SettingsData {
 	String onoff;
 	String frequency;
 	String network;
-	int screenWidth;
-	int screenHeight;
-	int screenDensity;
+
+	public SettingsData(String onoff, String frequency, String network) {
+		this.onoff = onoff;
+		this.frequency = frequency;
+		this.network = network;
+	}
 }

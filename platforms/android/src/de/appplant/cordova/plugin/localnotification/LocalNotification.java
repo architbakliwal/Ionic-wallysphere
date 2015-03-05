@@ -81,26 +81,32 @@ public class LocalNotification extends CordovaPlugin {
 
     @Override
     public boolean execute (String action, final JSONArray args, CallbackContext callbackContext) throws JSONException {
-        if (action.equalsIgnoreCase("getStartupData")) {
+        if (action.equalsIgnoreCase("getSettings")) {
             cordova.getThreadPool().execute( new Runnable() {
                 public void run() {
                     JSONObject arguments = args.optJSONObject(0);
                     Options options      = new Options(context).parse(arguments);
 
-                    getStartupData(options, true);
+                    getSettings(options);
                 }
             });
 
             return true;
         }
 
-        if (action.equalsIgnoreCase("setStartupData")) {
+        if (action.equalsIgnoreCase("setSettings")) {
             cordova.getThreadPool().execute( new Runnable() {
                 public void run() {
+                    Gson gson = new Gson();
                     JSONObject arguments = args.optJSONObject(0);
-                    Options options      = new Options(context).parse(arguments);
+                    Editor editor = getSharedPreferences().edit();
 
-                    setStartupData(options, true);
+                    Options options      = new Options(context).parse(arguments);
+                    SettingsData settingsData = SettingsData(options.getOnoff(), options.getFrequency(), options.getNetwork());
+                    
+                    String settingsDataJson = gson.toJson(settingsData);
+                    editor.putString("WallphereSettings", settingsDataJson);
+                    editor.commit();
                 }
             });
 

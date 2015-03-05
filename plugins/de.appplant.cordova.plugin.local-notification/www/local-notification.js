@@ -33,12 +33,12 @@ var LocalNotification = function() {
 };
 
 LocalNotification.prototype = {
-    getStartupData: function(options) {
-        cordova.exec(callbackFn, null, 'LocalNotification', 'getStartupData', [options]);
+    getSettings: function(options) {
+        cordova.exec(null, null, 'LocalNotification', 'getSettings', [options]);
     },
 
-    setStartupData: function(options) {
-        cordova.exec(callbackFn, null, 'LocalNotification', 'setStartupData', [options]);
+    setSettings: function(options) {
+        cordova.exec(null, null, 'LocalNotification', 'setSettings', [options]);
     },
     /**
      * Returns the default settings
