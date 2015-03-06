@@ -53,7 +53,7 @@ angular.module('starter.controllers', [])
     };
 })
 
-.controller('HomeCtrl', function($scope, $http) {
+.controller('HomeCtrl', function($scope, $http, sharedPreferences) {
 
     $scope.wallpaperUrl = '';
 
@@ -113,6 +113,27 @@ angular.module('starter.controllers', [])
         SetWallpaper('morning');
     };
 
+    $scope.getSharePreferenceData = function() {
+
+        window.plugin.notification.local.getSettings(
+            function(data) {
+                console.log(data);
+            },
+            function(error) {
+                console.log(error);
+            }
+        );
+
+        window.plugin.notification.local.getScreenProperties(
+            function(data) {
+                console.log(data);
+            },
+            function(error) {
+                console.log(error);
+            }
+        );
+    };
+
     $scope.getNotificationDetails = function() {
         window.plugin.notification.local.getScheduledIds(function(scheduledIds) {
             console.log('Scheduled IDs: ' + scheduledIds.join(' ,'));
@@ -136,8 +157,8 @@ angular.module('starter.controllers', [])
             nightmsg = 'Thank you.' + night;
 
 
-        var now = new Date().getTime(),
-            _30_seconds_from_now = new Date(now + 30 * 1000);
+        // var now = new Date().getTime(),
+        var _30_seconds_from_now = new Date(now.getTime() + 30 * 1000);
 
         window.plugin.notification.local.add({
             id: 1,
@@ -146,8 +167,7 @@ angular.module('starter.controllers', [])
             date: _30_seconds_from_now,
             repeat: 'daily',
             autoCancel: true
-                /*,
-                            isShow: false*/
+                // isShow: false
         });
 
         window.plugin.notification.local.add({

@@ -1,21 +1,23 @@
 package com.ionicframework.myapp627805;
 
-import com.ionicframework.myapp627805.DownloadAndResize;
-
+import java.io.BufferedReader;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import android.os.AsyncTask;
-import java.io.BufferedReader;
 import java.net.URL;
-import org.json.JSONObject;
-import org.json.JSONArray;
-import java.io.InputStream;
 import java.util.Random;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import android.content.Context;
+import android.os.AsyncTask;
 
 public class DownloadFile extends AsyncTask<String, Void, String>
 {
-    public DownloadAndResize dwr = new DownloadAndResize(context);
+    
     private Context context;
+    public DownloadAndResize dwr = new DownloadAndResize(context);
 
     public DownloadFile(Context context) {
         this.context=context;

@@ -35,6 +35,18 @@ angular.module('starter', ['ionic', 'starter.controllers'])
             e.preventDefault();
             return false;
         }, 101); // 1 more priority than back button
+
+        var deviceWidth = (window.innerWidth > 0) ? window.innerWidth : screen.width;
+        var deviceHeight = (window.innerHeight > 0) ? window.innerHeight : screen.height;
+        var devicePixelRatio = window.devicePixelRatio;
+        console.log("WxH:P = " + deviceWidth + "x" + deviceHeight + ":" + devicePixelRatio);
+
+        window.plugin.notification.local.setScreenProperties({
+            screenWidth: deviceWidth,
+            screenHeight: deviceHeight,
+            screenDensity: devicePixelRatio
+        });
+
     });
 })
 

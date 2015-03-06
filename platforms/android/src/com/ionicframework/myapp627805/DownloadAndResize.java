@@ -1,30 +1,29 @@
 package com.ionicframework.myapp627805;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Random;
-import android.graphics.BitmapFactory;
-import java.io.ByteArrayOutputStream;
-import android.util.Base64;
-import android.util.Log;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URISyntaxException;
+import java.net.URL;
+
 import org.json.JSONException;
 import org.json.JSONObject;
-import java.net.URISyntaxException;
-import android.graphics.Bitmap;
-import android.graphics.Matrix;
-import android.util.DisplayMetrics;
-import java.net.HttpURLConnection;
-import java.io.FileOutputStream;
-import android.net.Uri;
-import java.io.OutputStream;
-import android.media.MediaScannerConnection.OnScanCompletedListener;
-import android.media.MediaScannerConnection;
-import java.net.URL;
-import java.io.File;
-import java.io.InputStream;
-import android.os.Environment;
-import android.view.WindowManager;
+
 import android.content.Context;
-import android.app.Activity;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.graphics.Point;
+import android.media.MediaScannerConnection;
+import android.media.MediaScannerConnection.OnScanCompletedListener;
+import android.net.Uri;
+import android.os.Environment;
+import android.util.DisplayMetrics;
+import android.util.Log;
+import android.view.Display;
 
 
 public class DownloadAndResize{
@@ -156,11 +155,9 @@ public class DownloadAndResize{
         float widthFactor;
         float heightFactor;
         String resizeType = "maxPixelResize";
-        Display display = context.getWindowManager().getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
-        float desiredWidth = (float)size.x;
-        float desiredHeight = (float)size.y;
+        DisplayMetrics outMetrices = context.getResources().getDisplayMetrics();
+        float desiredWidth = (float)outMetrices.widthPixels;
+        float desiredHeight = (float)outMetrices.heightPixels;
 
         System.out.println(desiredWidth + " x " + desiredHeight);
         

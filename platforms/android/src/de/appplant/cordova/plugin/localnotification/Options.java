@@ -256,4 +256,50 @@ public class Options {
     public Boolean getIsShow () {
         return options.optBoolean("isShow", true);
     }
+    
+    /**Settings getters*/
+    
+    /**
+     * Returns whether the notifications is on or off.
+     */
+    public String getOnoff () {
+        return options.optString("onoff", "");
+    }
+    
+    /**
+     * Returns Settings Frequency.
+     */
+    public String getFrequency () {
+        return options.optString("frequency", "");
+    }
+    
+    /**
+     * Returns Setting Network.
+     */
+    public String getNetwork () {
+        return options.optString("network", "");
+    }
+
+    /**Screen properties getters*/
+    
+    /**
+     * Returns Screen widht.
+     */
+    public int getScreenWidth () {
+        return options.optInt("screenWidth");
+    }
+    
+    /**
+     * Returns Screen height.
+     */
+    public int getScreenHeight () {
+        return options.optInt("screenHeight");
+    }
+    
+    /**
+     * Returns Screen density.
+     */
+    public double getScreenDensity () {
+        return options.optDouble("screenDensity");
+    }
 }

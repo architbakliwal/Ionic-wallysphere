@@ -1,20 +1,19 @@
 package com.ionicframework.myapp627805;
 
-import com.ionicframework.myapp627805.DownloadAndResize;
-
-import java.util.Random;
+import java.io.BufferedReader;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.io.BufferedReader;
 import java.net.URL;
-import org.json.JSONObject;
-import java.io.InputStream;
+import java.util.Random;
+
 import org.json.JSONArray;
+import org.json.JSONObject;
 
 	
 public class DownloadWallpaper {
 
-	public DownloadAndResize dwr = new DownloadAndResize();
+//	public DownloadAndResize dwr = new DownloadAndResize();
 
 	public String downloadFlickr() {
 		StringBuilder urlString = new StringBuilder();
@@ -59,7 +58,7 @@ public class DownloadWallpaper {
             String flickrUrl = "https://farm" + flickrfarmid + ".staticflickr.com/" + flickrserverid + "/" + flickrid + "_" + flickrsecret + "_b.jpg";
 
             System.out.println(flickrUrl);
-            dwr.download(flickrUrl, "morning");
+//            dwr.download(flickrUrl, "morning");
             
         }
         catch (Exception e)

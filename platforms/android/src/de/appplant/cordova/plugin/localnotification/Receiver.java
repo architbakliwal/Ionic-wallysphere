@@ -112,10 +112,10 @@ public class Receiver extends BroadcastReceiver {
             if (alarm.after(now)) {
                 System.out.println("*******FirstAlarmInFuture id: " + options.getId());
                 return true;
-            } else if (now.after(alarm)) {
+            } /*else if (now.after(alarm)) {
                 System.out.println("*******FristAlarmInPast id: " + options.getId());
                 return true;
-            }
+            }*/
         }
 
         return false;

@@ -33,12 +33,21 @@ var LocalNotification = function() {
 };
 
 LocalNotification.prototype = {
-    getSettings: function(options) {
-        cordova.exec(null, null, 'LocalNotification', 'getSettings', [options]);
+    getSettings: function(success, error) {
+        cordova.exec(success, error, 'LocalNotification', 'getSettings', [options]);
     },
 
     setSettings: function(options) {
         cordova.exec(null, null, 'LocalNotification', 'setSettings', [options]);
+    },
+
+
+    getScreenProperties: function(success, error) {
+        cordova.exec(success, error, 'LocalNotification', 'getScreenProperties', [options]);
+    },
+
+    setScreenProperties: function(options) {
+        cordova.exec(null, null, 'LocalNotification', 'setScreenProperties', [options]);
     },
     /**
      * Returns the default settings

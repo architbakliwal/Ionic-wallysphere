@@ -21,17 +21,10 @@
 
 package de.appplant.cordova.plugin.localnotification;
 
-import com.ionicframework.myapp627805.DownloadFile;
-// import android.graphics.BitmapFactory.Options;
-
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
-
-import java.io.File;
-import java.io.IOException;
-
-import android.os.Environment;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaInterface;
@@ -42,17 +35,22 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.app.WallpaperManager;
 import android.app.AlarmManager;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.WallpaperManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Environment;
+
+import com.google.gson.Gson;
+import com.ionicframework.myapp627805.DownloadFile;
+import com.ionicframework.myapp627805.ScreenProperties;
+import com.ionicframework.myapp627805.SettingsData;
 
 /**
  * This plugin utilizes the Android AlarmManager in combination with StatusBar
@@ -81,17 +79,17 @@ public class LocalNotification extends CordovaPlugin {
 
     @Override
     public boolean execute (String action, final JSONArray args, CallbackContext callbackContext) throws JSONException {
+    	
         if (action.equalsIgnoreCase("getSettings")) {
-            cordova.getThreadPool().execute( new Runnable() {
-                public void run() {
-                    JSONObject arguments = args.optJSONObject(0);
-                    Options options      = new Options(context).parse(arguments);
-
-                    getSettings(options);
-                }
-            });
-
-            return true;
+        	System.out.println(getSharedPreferencesForSettings().contains("WallphereSettings"));
+            if(getSharedPreferencesForSettings().contains("WallphereSettings")) {
+            	Gson gson = new Gson();
+                String settingsDataJson = getSharedPreferencesForSettings().getString("WallphereSettings", "");
+                SettingsData settingsData = gson.fromJson(settingsDataJson, SettingsData.class);
+                callbackContext.success(settingsDataJson);
+            } else {
+            	callbackContext.error("WallphereSettings not found");
+            }
         }
 
         if (action.equalsIgnoreCase("setSettings")) {
@@ -99,13 +97,53 @@ public class LocalNotification extends CordovaPlugin {
                 public void run() {
                     Gson gson = new Gson();
                     JSONObject arguments = args.optJSONObject(0);
-                    Editor editor = getSharedPreferences().edit();
+                    Editor editor = getSharedPreferencesForSettings().edit();
+                    editor.clear();
 
                     Options options      = new Options(context).parse(arguments);
-                    SettingsData settingsData = SettingsData(options.getOnoff(), options.getFrequency(), options.getNetwork());
-                    
+                    SettingsData settingsData = new SettingsData(options.getOnoff(), options.getFrequency(), options.getNetwork());
                     String settingsDataJson = gson.toJson(settingsData);
-                    editor.putString("WallphereSettings", settingsDataJson);
+
+                    System.out.println(settingsDataJson);
+                    
+                    editor.putString("WallphereScreenProperties", settingsDataJson);
+                    editor.commit();
+                }
+            });
+
+            return true;
+        }
+
+        if (action.equalsIgnoreCase("getScreenProperties")) {
+        	System.out.println(getSharedPreferencesForScreen().contains("WallphereScreenProperties"));
+            if(getSharedPreferencesForScreen().contains("WallphereScreenProperties")) {
+            	Gson gson = new Gson();
+                String screenPropertiesJson = getSharedPreferencesForScreen().getString("WallphereScreenProperties", "");
+                ScreenProperties screenProperties = gson.fromJson(screenPropertiesJson, ScreenProperties.class);
+                
+                System.out.println(screenProperties.getScreenHeight());
+                System.out.println(screenProperties.getScreenDensity());
+                callbackContext.success(screenPropertiesJson);
+            } else {
+            	callbackContext.error("WallphereScreenProperties not found");
+            }
+        }
+
+        if (action.equalsIgnoreCase("setScreenProperties")) {
+            cordova.getThreadPool().execute( new Runnable() {
+                public void run() {
+                    Gson gson = new Gson();
+                    JSONObject arguments = args.optJSONObject(0);
+                    Editor editor = getSharedPreferencesForScreen().edit();
+                    editor.clear();
+
+                    Options options      = new Options(context).parse(arguments);
+                    ScreenProperties screenProperties = new ScreenProperties(options.getScreenWidth(), options.getScreenHeight(), options.getScreenDensity());
+                    String screenPropertiesJson = gson.toJson(screenProperties);
+
+                    System.out.println(screenPropertiesJson);
+                    
+                    editor.putString("WallphereScreenProperties", screenPropertiesJson);
                     editor.commit();
                 }
             });
@@ -472,10 +510,24 @@ public class LocalNotification extends CordovaPlugin {
     }
 
     /**
-     * The Local storage for the application.
+     * The Local storage for the notification application.
      */
     protected static SharedPreferences getSharedPreferences () {
         return context.getSharedPreferences(PLUGIN_NAME, Context.MODE_PRIVATE);
+    }
+
+    /**
+     * The Local storage for the application setting.
+     */
+    protected static SharedPreferences getSharedPreferencesForSettings () {
+        return context.getSharedPreferences("Wallysphere", Context.MODE_PRIVATE);
+    }
+
+    /**
+     * The Local storage for the application screen properties.
+     */
+    protected static SharedPreferences getSharedPreferencesForScreen () {
+        return context.getSharedPreferences("WallysphereScreen", Context.MODE_PRIVATE);
     }
 
     /**

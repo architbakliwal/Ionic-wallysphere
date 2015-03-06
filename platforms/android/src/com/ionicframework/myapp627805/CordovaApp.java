@@ -30,14 +30,8 @@ public class CordovaApp extends CordovaActivity
     {
         super.onCreate(savedInstanceState);
         super.init();
-        this.context = getApplicationContext(); // Grab the Context you want.
         // Set by <content src="index.html" /> in config.xml
         loadUrl(launchUrl);
-    }
-
-    public Context getApplicationContext()
-    { 
-        return this.context;
     }
 
 }
