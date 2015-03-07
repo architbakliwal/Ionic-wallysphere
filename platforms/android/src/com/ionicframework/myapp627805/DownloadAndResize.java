@@ -13,26 +13,31 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
-import android.graphics.Point;
-import android.media.MediaScannerConnection;
-import android.media.MediaScannerConnection.OnScanCompletedListener;
-import android.net.Uri;
 import android.os.Environment;
-import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Display;
+
+import com.google.gson.Gson;
 
 
 public class DownloadAndResize{
 
     public JSONObject params = new JSONObject();
-    private Context context;
+    private static Context context;
+    private ScreenProperties screenProperties;
 
     public DownloadAndResize(Context context) {
-        this.context=context;
+    	DownloadAndResize.context = context;
+        if(getSharedPreferencesForScreen().contains("WallphereScreenProperties")) {
+        	Gson gson = new Gson();
+            String screenPropertiesJson = getSharedPreferencesForScreen().getString("WallphereScreenProperties", "");
+            screenProperties = gson.fromJson(screenPropertiesJson, ScreenProperties.class);
+        } else {
+        	System.out.println("WallphereScreenProperties not found");
+        }
     }
 
     private Bitmap getBitmap(String imageData, BitmapFactory.Options options) throws IOException, URISyntaxException {
@@ -50,7 +55,7 @@ public class DownloadAndResize{
         return bmp;
     }
     
-    private void storeImage(JSONObject params, Bitmap bmp) throws JSONException, IOException, URISyntaxException {
+    private String storeImage(JSONObject params, Bitmap bmp) throws JSONException, IOException, URISyntaxException {
         
         int quality = 100;
         String filename = params.getString("filename");
@@ -64,25 +69,17 @@ public class DownloadAndResize{
 
         OutputStream outStream = new FileOutputStream(file);
         bmp.compress(Bitmap.CompressFormat.JPEG, quality, outStream);
-
-        MediaScannerConnection.scanFile(                                
-            context, 
-            new String[]{file.getAbsolutePath()}, 
-            null, 
-            new OnScanCompletedListener() {
-               @Override
-               public void onScanCompleted(String filepath, Uri uri) {
-                  System.out.println("file: " + filepath + " was scanned successfully: " + uri);
-               }
-        });
+        
+        System.out.println(file.getAbsolutePath());
 
         outStream.flush();
         outStream.close();
+        
+        return file.getAbsolutePath();
     }
 
-	public void download(String url, String filename) {
+	public String download(String url, String filename) {
 		try {
-
             params.put("filename", filename);
             params.put("directory", "Wallysphere");
 
@@ -104,16 +101,20 @@ public class DownloadAndResize{
             sizes = calculateFactors(options.outWidth, options.outHeight);
             bmp = getResizedBitmap(bmp, sizes[0], sizes[1]);
 
-            storeImage(params, bmp);
+            String filePath = storeImage(params, bmp);
+            return filePath;
                     
         } catch (JSONException e) {
             Log.d("PLUGIN", e.getMessage());
+            return "";
             // callbackContext.error(e.getMessage());
         } catch (IOException e) {
             Log.d("PLUGIN", e.getMessage());
+            return "";
             // callbackContext.error(e.getMessage());
         } catch (URISyntaxException e) {
             Log.d("PLUGIN", e.getMessage());
+            return "";
             // callbackContext.error(e.getMessage());
         }
     }
@@ -155,9 +156,12 @@ public class DownloadAndResize{
         float widthFactor;
         float heightFactor;
         String resizeType = "maxPixelResize";
-        DisplayMetrics outMetrices = context.getResources().getDisplayMetrics();
-        float desiredWidth = (float)outMetrices.widthPixels;
-        float desiredHeight = (float)outMetrices.heightPixels;
+//        DisplayMetrics outMetrices = context.getResources().getDisplayMetrics();
+//        float desiredWidth = (float)outMetrices.widthPixels;
+//        float desiredHeight = (float)outMetrices.heightPixels;
+        
+        float desiredWidth = (float)screenProperties.getScreenWidth();
+        float desiredHeight = (float)screenProperties.getScreenHeight();
 
         System.out.println(desiredWidth + " x " + desiredHeight);
         
@@ -190,7 +194,7 @@ public class DownloadAndResize{
         }
 
         //pixelDensity
-        DisplayMetrics metrics = context.getResources().getDisplayMetrics();
+        /*DisplayMetrics metrics = context.getResources().getDisplayMetrics();
         if (metrics.density > 1) {
             if (widthFactor * metrics.density < 1.0 && heightFactor * metrics.density < 1.0) {
                 widthFactor *= metrics.density;
@@ -199,9 +203,43 @@ public class DownloadAndResize{
                 widthFactor = 1.0f;
                 heightFactor = 1.0f;
             }
+        }*/
+        
+        double screenDensity = screenProperties.getScreenDensity();
+        if (screenDensity > 1) {
+            if (widthFactor * screenDensity < 1.0 && heightFactor * screenDensity < 1.0) {
+                widthFactor *= screenDensity;
+                heightFactor *= screenDensity;
+            } else {
+                widthFactor = 1.0f;
+                heightFactor = 1.0f;
+            }
         }
         
         float[] sizes = {widthFactor, heightFactor};
         return sizes;
+    }
+    
+    /**
+     * Set the application context if not already set.
+     */
+    public static void setContext (Context context) {
+        if (DownloadAndResize.context == null) {
+        	DownloadAndResize.context = context;
+        }
+    }
+    
+    /**
+     * The Local storage for the application setting.
+     */
+    protected static SharedPreferences getSharedPreferencesForSettings () {
+        return context.getSharedPreferences("Wallysphere", Context.MODE_PRIVATE);
+    }
+
+    /**
+     * The Local storage for the application screen properties.
+     */
+    protected static SharedPreferences getSharedPreferencesForScreen () {
+        return context.getSharedPreferences("WallysphereScreen", Context.MODE_PRIVATE);
     }
 }

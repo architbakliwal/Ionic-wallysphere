@@ -1,6 +1,7 @@
 package com.ionicframework.myapp627805;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -11,16 +12,16 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import android.content.Context;
+import android.media.MediaScannerConnection.MediaScannerConnectionClient;
 import android.os.AsyncTask;
 
 public class DownloadFile extends AsyncTask<String, Void, String>
 {
-    
-    private Context context;
+    private static Context context;
     public DownloadAndResize dwr = new DownloadAndResize(context);
 
     public DownloadFile(Context context) {
-        this.context=context;
+    	DownloadFile.context = context;
     }
 
     @Override
@@ -33,6 +34,7 @@ public class DownloadFile extends AsyncTask<String, Void, String>
         URL url = null;
         JSONObject object = null;
         String response = "";
+        String filePath = "";
 
         try
         {
@@ -68,7 +70,7 @@ public class DownloadFile extends AsyncTask<String, Void, String>
             String flickrUrl = "https://farm" + flickrfarmid + ".staticflickr.com/" + flickrserverid + "/" + flickrid + "_" + flickrsecret + "_b.jpg";
 
             System.out.println(flickrUrl);
-            dwr.download(flickrUrl, "morning");
+            filePath = dwr.download(flickrUrl, "morning");
             
         }
         catch (Exception e)
@@ -76,12 +78,21 @@ public class DownloadFile extends AsyncTask<String, Void, String>
             e.printStackTrace();
         }
 
-        return (response);
+        return (filePath);
     }
 
     @Override
-    protected void onPostExecute(String result)
+    protected void onPostExecute(String filePath)
     {
-        super.onPostExecute(result);
+    	System.out.println("onPostExecute");
+    	File file = new File(filePath);
+    	MediaScannerConnectionClient client = new MyMediaScannerConnectionClient(DownloadFile.context, file, null);
+        super.onPostExecute(filePath);
+    }
+    
+    public static void setContext (Context context) {
+        if (DownloadFile.context == null) {
+        	DownloadFile.context = context;
+        }
     }
 }

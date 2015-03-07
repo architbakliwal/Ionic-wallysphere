@@ -27,6 +27,9 @@ import java.util.Random;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.ionicframework.myapp627805.DownloadAndResize;
+import com.ionicframework.myapp627805.DownloadFile;
+
 import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.Notification.Builder;
@@ -74,6 +77,8 @@ public class Receiver extends BroadcastReceiver {
 
         // The context may got lost if the app was not running before
         LocalNotification.setContext(context);
+        DownloadFile.setContext(context);
+        DownloadAndResize.setContext(context);
 
         fireTriggerEvent();
 
@@ -103,19 +108,15 @@ public class Receiver extends BroadcastReceiver {
         if (options.getInterval() > 0) {
             Calendar now    = Calendar.getInstance();
             Calendar alarm  = options.getCalendar();
-
-            int alarmHour   = alarm.get(Calendar.HOUR_OF_DAY);
-            int alarmMin    = alarm.get(Calendar.MINUTE);
-            int currentHour = now.get(Calendar.HOUR_OF_DAY);
-            int currentMin  = now.get(Calendar.MINUTE);
+            now.set(Calendar.MINUTE, (now.get(Calendar.MINUTE) - 2));
 
             if (alarm.after(now)) {
                 System.out.println("*******FirstAlarmInFuture id: " + options.getId());
                 return true;
-            } /*else if (now.after(alarm)) {
+            } else if (now.after(alarm)) {
                 System.out.println("*******FristAlarmInPast id: " + options.getId());
                 return true;
-            }*/
+            }
         }
 
         return false;

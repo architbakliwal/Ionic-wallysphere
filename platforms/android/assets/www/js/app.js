@@ -36,16 +36,22 @@ angular.module('starter', ['ionic', 'starter.controllers'])
             return false;
         }, 101); // 1 more priority than back button
 
-        var deviceWidth = (window.innerWidth > 0) ? window.innerWidth : screen.width;
-        var deviceHeight = (window.innerHeight > 0) ? window.innerHeight : screen.height;
-        var devicePixelRatio = window.devicePixelRatio;
-        console.log("WxH:P = " + deviceWidth + "x" + deviceHeight + ":" + devicePixelRatio);
+        if (!window.localStorage.getItem("WallysphereIsFirstInstall")) {
 
-        window.plugin.notification.local.setScreenProperties({
-            screenWidth: deviceWidth,
-            screenHeight: deviceHeight,
-            screenDensity: devicePixelRatio
-        });
+            var deviceWidth = (window.innerWidth > 0) ? window.innerWidth : screen.width;
+            var deviceHeight = (window.innerHeight > 0) ? window.innerHeight : screen.height;
+            var devicePixelRatio = window.devicePixelRatio;
+
+            window.plugin.notification.local.setScreenProperties({
+                screenWidth: deviceWidth,
+                screenHeight: deviceHeight,
+                screenDensity: devicePixelRatio
+            });
+
+            window.localStorage.setItem("WallysphereIsFirstInstall", "true");
+        } else {
+
+        }
 
     });
 })

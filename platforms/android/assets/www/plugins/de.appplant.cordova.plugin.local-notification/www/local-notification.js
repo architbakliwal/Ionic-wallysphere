@@ -33,7 +33,7 @@ var LocalNotification = function() {
 };
 
 LocalNotification.prototype = {
-    getSettings: function(success, error) {
+    getSettings: function(success, error, options) {
         cordova.exec(success, error, 'LocalNotification', 'getSettings', [options]);
     },
 
@@ -42,7 +42,7 @@ LocalNotification.prototype = {
     },
 
 
-    getScreenProperties: function(success, error) {
+    getScreenProperties: function(success, error, options) {
         cordova.exec(success, error, 'LocalNotification', 'getScreenProperties', [options]);
     },
 

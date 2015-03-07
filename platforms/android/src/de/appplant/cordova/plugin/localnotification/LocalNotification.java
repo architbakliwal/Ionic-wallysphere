@@ -64,7 +64,7 @@ public class LocalNotification extends CordovaPlugin {
 
     private   static CordovaWebView webView = null;
     private   static Boolean deviceready = false;
-    protected static Context context = null;
+    public static Context context = null;
     protected static Boolean isInBackground = true;
     private   static ArrayList<String> eventQueue = new ArrayList<String>();
     // public static DownloadFile df = new DownloadFile();
@@ -99,14 +99,11 @@ public class LocalNotification extends CordovaPlugin {
                     JSONObject arguments = args.optJSONObject(0);
                     Editor editor = getSharedPreferencesForSettings().edit();
                     editor.clear();
-
                     Options options      = new Options(context).parse(arguments);
                     SettingsData settingsData = new SettingsData(options.getOnoff(), options.getFrequency(), options.getNetwork());
                     String settingsDataJson = gson.toJson(settingsData);
-
                     System.out.println(settingsDataJson);
-                    
-                    editor.putString("WallphereScreenProperties", settingsDataJson);
+                    editor.putString("WallphereSettings", settingsDataJson);
                     editor.commit();
                 }
             });
@@ -120,9 +117,6 @@ public class LocalNotification extends CordovaPlugin {
             	Gson gson = new Gson();
                 String screenPropertiesJson = getSharedPreferencesForScreen().getString("WallphereScreenProperties", "");
                 ScreenProperties screenProperties = gson.fromJson(screenPropertiesJson, ScreenProperties.class);
-                
-                System.out.println(screenProperties.getScreenHeight());
-                System.out.println(screenProperties.getScreenDensity());
                 callbackContext.success(screenPropertiesJson);
             } else {
             	callbackContext.error("WallphereScreenProperties not found");
@@ -136,13 +130,9 @@ public class LocalNotification extends CordovaPlugin {
                     JSONObject arguments = args.optJSONObject(0);
                     Editor editor = getSharedPreferencesForScreen().edit();
                     editor.clear();
-
                     Options options      = new Options(context).parse(arguments);
                     ScreenProperties screenProperties = new ScreenProperties(options.getScreenWidth(), options.getScreenHeight(), options.getScreenDensity());
                     String screenPropertiesJson = gson.toJson(screenProperties);
-
-                    System.out.println(screenPropertiesJson);
-                    
                     editor.putString("WallphereScreenProperties", screenPropertiesJson);
                     editor.commit();
                 }
@@ -440,9 +430,11 @@ public class LocalNotification extends CordovaPlugin {
 
             String fileName;
 
-            if(id.equalsIgnoreCase("1")) {
-                // String dwUrl = dw.downloadFlickr();
-                new DownloadFile(context).execute();
+            if(id.equalsIgnoreCase("11")) {
+            	new DownloadFile(context).execute();
+                return;
+            } else if(id.equalsIgnoreCase("1")) {
+            	new DownloadFile(context).execute();
                 return;
             } else if(id.equalsIgnoreCase("2")) {
                 fileName = "morning";

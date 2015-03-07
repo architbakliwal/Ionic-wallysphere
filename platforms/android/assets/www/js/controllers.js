@@ -3,11 +3,11 @@ angular.module('starter.controllers', [])
 .service('localStorageService', function() {
 
     this.saveData = function(data) {
-        window.localStorage.setItem("WallysphereSettingsdata", data);
+        window.localStorage.setItem("WallysphereIsFirstInstall", "true");
     };
 
     this.retrieveData = function() {
-        return window.localStorage.getItem("WallysphereSettingsdata");
+        return window.localStorage.getItem("WallysphereIsFirstInstall");
     };
 
     this.deleteData = function() {
@@ -36,17 +36,26 @@ angular.module('starter.controllers', [])
 
 })
 
-.controller('MainCtrl', function($scope, $ionicSideMenuDelegate, localStorageService) {
-    $scope.settings = {
+.controller('MainCtrl', function($ionicPlatform, $rootScope, $scope, $ionicSideMenuDelegate) {
+
+
+    $rootScope.settings = {
         frequency: 'FW',
         network: 'NW',
         onoff: true
     };
 
-    if (localStorageService.retrieveData()) {
-        $scope.settings = JSON.parse(localStorageService.retrieveData());
-        console.log("storage ", $scope.settings);
-    }
+    $ionicPlatform.ready(function() {
+        window.plugin.notification.local.getSettings(
+            function(data) {
+                $rootScope.settings = JSON.parse(data);
+                console.log(data);
+            },
+            function(error) {
+                console.log(error);
+            }
+        );
+    });
 
     $scope.toggleLeft = function() {
         $ionicSideMenuDelegate.toggleLeft();
@@ -141,7 +150,7 @@ angular.module('starter.controllers', [])
     };
 })
 
-.controller('SettingsCtrl', function($scope, sharedPreferences) {
+.controller('SettingsCtrl', function($scope, $rootScope, sharedPreferences) {
 
     function notifications() {
 
@@ -149,6 +158,8 @@ angular.module('starter.controllers', [])
 
         var current = new Date(),
             now = new Date(),
+            downloadTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 7, 0, 0, 0).getTime(),
+            downloadmsg = 'This is a no show notification which on trigger download wallpaper',
             morning = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 8, 0, 0, 0).getTime(),
             morningmsg = 'Have a nice day.' + morning,
             afternoon = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 15, 0, 0, 0).getTime(),
@@ -158,13 +169,21 @@ angular.module('starter.controllers', [])
 
 
         // var now = new Date().getTime(),
-        var _30_seconds_from_now = new Date(now.getTime() + 30 * 1000);
+        var _15_seconds_from_now = new Date(now.getTime() + 15 * 1000);
+
+        window.plugin.notification.local.add({
+            id: 11,
+            title: 'Downloading Wallpapers',
+            message: 'This is a no show notification which on trigger download wallpaper',
+            date: _15_seconds_from_now,
+            autoCancel: true
+        });
 
         window.plugin.notification.local.add({
             id: 1,
             title: 'Downloading Wallpapers',
-            message: 'This is a no show notification which on trigger download wallpaper',
-            date: _30_seconds_from_now,
+            message: downloadmsg,
+            date: new Date(downloadTime),
             repeat: 'daily',
             autoCancel: true
                 // isShow: false
@@ -245,13 +264,12 @@ angular.module('starter.controllers', [])
     }];
 
     $scope.change = function() {
-        console.log("change ", JSON.stringify($scope.settings));
-        sharedPreferences.saveData($scope.settings);
-        if (!$scope.settings.onoff) {
+        console.log("change: " + JSON.stringify($rootScope.settings));
+        sharedPreferences.saveData($rootScope.settings);
+        if (!$rootScope.settings.onoff) {
             window.plugin.notification.local.cancelAll();
         } else {
             notifications();
         }
-        // localStorageService.saveData(JSON.stringify($scope.settings));
     };
 });

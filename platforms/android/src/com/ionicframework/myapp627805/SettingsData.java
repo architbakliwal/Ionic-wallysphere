@@ -1,21 +1,21 @@
 package com.ionicframework.myapp627805;
 
 public class SettingsData {
-	String onoff;
+	Boolean onoff;
 	String frequency;
 	String network;
 
 	/**
 	 * @return the onoff
 	 */
-	public String getOnoff() {
+	public Boolean getOnoff() {
 		return onoff;
 	}
 
 	/**
 	 * @param onoff the onoff to set
 	 */
-	public void setOnoff(String onoff) {
+	public void setOnoff(Boolean onoff) {
 		this.onoff = onoff;
 	}
 
@@ -47,7 +47,7 @@ public class SettingsData {
 		this.network = network;
 	}
 
-	public SettingsData(String onoff, String frequency, String network) {
+	public SettingsData(Boolean onoff, String frequency, String network) {
 		this.onoff = onoff;
 		this.frequency = frequency;
 		this.network = network;

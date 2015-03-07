@@ -262,8 +262,8 @@ public class Options {
     /**
      * Returns whether the notifications is on or off.
      */
-    public String getOnoff () {
-        return options.optString("onoff", "");
+    public Boolean getOnoff () {
+        return options.optBoolean("onoff", true);
     }
     
     /**
