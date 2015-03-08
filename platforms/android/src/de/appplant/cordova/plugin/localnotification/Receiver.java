@@ -109,14 +109,16 @@ public class Receiver extends BroadcastReceiver {
             Calendar now    = Calendar.getInstance();
             Calendar alarm  = options.getCalendar();
             now.set(Calendar.MINUTE, (now.get(Calendar.MINUTE) - 2));
+            
+//            System.out.println(options.getId() + " : " + now + " : " + alarm);
 
-            if (alarm.after(now)) {
+            /*if (alarm.after(now)) {
                 System.out.println("*******FirstAlarmInFuture id: " + options.getId());
                 return true;
             } else if (now.after(alarm)) {
                 System.out.println("*******FristAlarmInPast id: " + options.getId());
                 return true;
-            }
+            }*/
         }
 
         return false;
@@ -196,7 +198,6 @@ public class Receiver extends BroadcastReceiver {
      * Fires ontrigger event.
      */
     private void fireTriggerEvent () {
-        System.out.println("*******fireTriggerEvent id: " + options.getId());
         LocalNotification.fireEvent("trigger", options.getId(), options.getJSON());
     }
 }

@@ -81,7 +81,6 @@ public class LocalNotification extends CordovaPlugin {
     public boolean execute (String action, final JSONArray args, CallbackContext callbackContext) throws JSONException {
     	
         if (action.equalsIgnoreCase("getSettings")) {
-        	System.out.println(getSharedPreferencesForSettings().contains("WallphereSettings"));
             if(getSharedPreferencesForSettings().contains("WallphereSettings")) {
             	Gson gson = new Gson();
                 String settingsDataJson = getSharedPreferencesForSettings().getString("WallphereSettings", "");
@@ -102,7 +101,6 @@ public class LocalNotification extends CordovaPlugin {
                     Options options      = new Options(context).parse(arguments);
                     SettingsData settingsData = new SettingsData(options.getOnoff(), options.getFrequency(), options.getNetwork());
                     String settingsDataJson = gson.toJson(settingsData);
-                    System.out.println(settingsDataJson);
                     editor.putString("WallphereSettings", settingsDataJson);
                     editor.commit();
                 }
@@ -112,7 +110,6 @@ public class LocalNotification extends CordovaPlugin {
         }
 
         if (action.equalsIgnoreCase("getScreenProperties")) {
-        	System.out.println(getSharedPreferencesForScreen().contains("WallphereScreenProperties"));
             if(getSharedPreferencesForScreen().contains("WallphereScreenProperties")) {
             	Gson gson = new Gson();
                 String screenPropertiesJson = getSharedPreferencesForScreen().getString("WallphereScreenProperties", "");
@@ -425,16 +422,16 @@ public class LocalNotification extends CordovaPlugin {
         System.out.println(event + " " + id);
 
         if(event.equalsIgnoreCase("trigger")) {
-
-            System.out.println("*******fireEvent id: " + id);
-
             String fileName;
 
             if(id.equalsIgnoreCase("11")) {
-            	new DownloadFile(context).execute();
+            	new DownloadFile(context).execute("morning");
+                return;
+            } else if(id.equalsIgnoreCase("12")) {
+            	new DownloadFile(context).execute("night");
                 return;
             } else if(id.equalsIgnoreCase("1")) {
-            	new DownloadFile(context).execute();
+            	new DownloadFile(context).execute("morning");
                 return;
             } else if(id.equalsIgnoreCase("2")) {
                 fileName = "morning";
@@ -446,18 +443,39 @@ public class LocalNotification extends CordovaPlugin {
             } else {
                 fileName = "morning";
             }
+            
+            try {
+                File folder = new File(Environment.getExternalStorageDirectory() + "/Wallysphere");
+                if(!folder.exists()) {
+                	System.out.println("The wallysphere folder could not be found.");
+                    // throw new IOException("The wallysphere folder could not be found.");
+                }
+                File file = new File(folder, fileName + ".jpeg");
+                if(!file.exists()) {
+                	System.out.println("The image file could not be found.");
+//                     throw new IOException("The image file could not be found.");
+                }
+
+                WallpaperManager wallpaperManager = WallpaperManager.getInstance(context);
+                Bitmap setAsWallpaper = BitmapFactory.decodeFile(file.getAbsolutePath());
+                wallpaperManager.setBitmap(setAsWallpaper);
+            } catch (Exception e) {
+
+            }
 
             // webview may available, but callbacks needs to be executed
-            if (deviceready == false) {
+            /*if (deviceready == false) {
                 eventQueue.add(js);
                 try {
                     File folder = new File(Environment.getExternalStorageDirectory() + "/Wallysphere");
                     if(!folder.exists()) {
+                    	System.out.println("The wallysphere folder could not be found.");
                         // throw new IOException("The wallysphere folder could not be found.");
                     }
                     File file = new File(folder, fileName + ".jpeg");
                     if(!file.exists()) {
-                        // throw new IOException("The image file could not be found.");
+                    	System.out.println("The image file could not be found.");
+//                         throw new IOException("The image file could not be found.");
                     }
 
                     WallpaperManager wallpaperManager = WallpaperManager.getInstance(context);
@@ -469,7 +487,7 @@ public class LocalNotification extends CordovaPlugin {
                 
             } else {
                 webView.sendJavascript(js);
-            }
+            }*/
 
         } else {
             if(deviceready) {

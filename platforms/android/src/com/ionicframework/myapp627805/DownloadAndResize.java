@@ -5,9 +5,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.HttpURLConnection;
 import java.net.URISyntaxException;
 import java.net.URL;
+
+import javax.net.ssl.HttpsURLConnection;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -44,8 +45,10 @@ public class DownloadAndResize{
         Bitmap bmp;
         
         URL url = new URL(imageData);
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
         connection.setDoInput(true);
+        connection.setDoOutput(true);
+        connection.setConnectTimeout(30000);
         connection.connect();
         InputStream input = connection.getInputStream();
         bmp = BitmapFactory.decodeStream(input, null, options);
@@ -69,8 +72,6 @@ public class DownloadAndResize{
 
         OutputStream outStream = new FileOutputStream(file);
         bmp.compress(Bitmap.CompressFormat.JPEG, quality, outStream);
-        
-        System.out.println(file.getAbsolutePath());
 
         outStream.flush();
         outStream.close();
@@ -156,14 +157,8 @@ public class DownloadAndResize{
         float widthFactor;
         float heightFactor;
         String resizeType = "maxPixelResize";
-//        DisplayMetrics outMetrices = context.getResources().getDisplayMetrics();
-//        float desiredWidth = (float)outMetrices.widthPixels;
-//        float desiredHeight = (float)outMetrices.heightPixels;
-        
         float desiredWidth = (float)screenProperties.getScreenWidth();
         float desiredHeight = (float)screenProperties.getScreenHeight();
-
-        System.out.println(desiredWidth + " x " + desiredHeight);
         
         if (resizeType.equals("minPixelResize")) {
             widthFactor = desiredWidth / (float)width;

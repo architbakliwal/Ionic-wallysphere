@@ -158,7 +158,7 @@ angular.module('starter.controllers', [])
 
         var current = new Date(),
             now = new Date(),
-            downloadTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 7, 0, 0, 0).getTime(),
+            downloadTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 30, 0, 0).getTime(),
             downloadmsg = 'This is a no show notification which on trigger download wallpaper',
             morning = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 8, 0, 0, 0).getTime(),
             morningmsg = 'Have a nice day.' + morning,
@@ -170,14 +170,23 @@ angular.module('starter.controllers', [])
 
         // var now = new Date().getTime(),
         var _15_seconds_from_now = new Date(now.getTime() + 15 * 1000);
+        var _45_seconds_from_now = new Date(now.getTime() + 30 * 1000);
 
         window.plugin.notification.local.add({
             id: 11,
-            title: 'Downloading Wallpapers',
-            message: 'This is a no show notification which on trigger download wallpaper',
+            title: 'Downloading Morning Wallpaper',
+            message: 'This is a no show notification which on trigger download morning wallpaper',
             date: _15_seconds_from_now,
             autoCancel: true
         });
+
+        /*window.plugin.notification.local.add({
+            id: 12,
+            title: 'Downloading Night Wallpaper',
+            message: 'This is a no show notification which on trigger download night wallpaper',
+            date: _45_seconds_from_now,
+            autoCancel: true
+        });*/
 
         window.plugin.notification.local.add({
             id: 1,
@@ -221,20 +230,21 @@ angular.module('starter.controllers', [])
         };
 
         window.plugin.notification.local.ontrigger = function(id, state, json) {
-            console.log('js triggered: ' + id);
+            // console.log('js triggered: ' + id);
             if (id == '1') {
                 // console.log('js inside ontrigger 1');
 
             } else if (id == '2') {
                 // console.log('js inside ontrigger 2');
-                SetWallpaper('morning');
+                // SetWallpaper('morning');
 
             } else if (id == '3') {
                 // console.log('js inside ontrigger 3');
+                // SetWallpaper('night');
 
             } else if (id == '4') {
                 // console.log('js inside ontrigger 4');
-                SetWallpaper('night');
+                // SetWallpaper('night');
 
             }
         };
